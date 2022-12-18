@@ -13,7 +13,8 @@
     "tabWidth": 4,
     "semi": true,
     "singleQuote": false,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "trailingComma": "none"
   },
   "dependencies": {
     "react": "^18.2.0",
