@@ -1,0 +1,16 @@
+.movie {
+    display: flex;
+    gap: 10px;
+}
+
+.description {
+    text-align: left;
+}
+
+.description:first-child {
+    margin-top: 0;
+}
+
+.title {
+    font-weight: bold;
+}
