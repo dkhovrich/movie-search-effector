@@ -3,7 +3,6 @@ import classes from "./search-form.module.css";
 import { createEffect, createEvent, createStore, sample } from "effector";
 import { useUnit } from "effector-react";
 import { Field } from "./Field/Field";
-import { clearForm } from "./events";
 import { fetchMovie } from "../api";
 import { Movie } from "../types";
 
@@ -21,6 +20,8 @@ const setField = createEvent<{
 }>("setField");
 
 const submitted = createEvent<React.FormEvent<HTMLFormElement>>("submitted");
+
+export const clearForm = createEvent("clearForm");
 
 const $form = createStore<FormState>({ search: "" })
     .on(setField, (state, { key, value }) => ({ ...state, [key]: value }))
@@ -70,7 +71,8 @@ export const SearchForm: React.FC = () => {
                 placeHolder={"Search movie..."}
                 value={state.search}
                 onChange={value => setField({ key: "search", value })}
-                autoFocus={true}
+                focusOnMount={true}
+                focusOnEvent={clearForm}
             >
                 {canClear && <ClearButton />}
             </Field>

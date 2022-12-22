@@ -1,13 +1,7 @@
-import React, {
-    ReactNode,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useRef
-} from "react";
+import React, { ReactNode, useEffect, useLayoutEffect, useRef } from "react";
 import cn from "classnames";
+import { Event } from "effector";
 import classes from "./field.module.css";
-import { clearForm } from "../events";
 
 type Props = {
     readonly name?: string;
@@ -16,7 +10,8 @@ type Props = {
     readonly onChange: (value: string) => void;
     readonly placeHolder: string;
     readonly className?: string;
-    readonly autoFocus?: boolean;
+    readonly focusOnMount?: boolean;
+    readonly focusOnEvent?: Event<void>;
     readonly children?: ReactNode;
 };
 
@@ -28,22 +23,24 @@ export const Field: React.FC<Props> = ({
     placeHolder,
     className,
     children,
-    autoFocus = false
+    focusOnMount = false,
+    focusOnEvent
 }) => {
     const ref = useRef<HTMLInputElement>(null);
 
-    const focus = useCallback(() => {
-        if (autoFocus && ref.current !== null) {
+    useLayoutEffect(() => {
+        if (focusOnMount && ref.current !== null) {
             ref.current.focus();
         }
-    }, [autoFocus]);
-
-    useLayoutEffect(() => focus(), [focus]);
+    }, [focusOnMount]);
 
     useEffect(() => {
-        const subscription = clearForm.watch(() => focus());
+        if (focusOnEvent === undefined) return;
+        const subscription = focusOnEvent.watch(() => {
+            ref.current?.focus();
+        });
         return () => subscription.unsubscribe();
-    }, [focus]);
+    }, [focusOnEvent]);
 
     return (
         <div className={cn(className, classes.field)}>
