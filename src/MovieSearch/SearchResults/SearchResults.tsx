@@ -1,15 +1,8 @@
 import React from "react";
-import { combine, restore } from "effector";
-import { searchMovieFx } from "../SearchForm/SearchForm";
 import { useUnit } from "effector-react/effector-react.umd";
 import { Movie } from "../types";
 import classes from "./search-results.module.css";
-
-const $movieGetStatus = combine({
-    loading: searchMovieFx.pending,
-    error: restore<Error>(searchMovieFx.failData, null),
-    data: restore<Movie>(searchMovieFx.doneData, null)
-});
+import { factory } from "../factory";
 
 type DescriptionItem = {
     readonly title: string;
@@ -28,7 +21,8 @@ const createDescriptionItems = (movie: Movie): readonly DescriptionItem[] => [
 ];
 
 export const SearchResults: React.FC = () => {
-    const { loading, error, data } = useUnit($movieGetStatus);
+    const model = factory.useModel();
+    const { loading, error, data } = useUnit(model.$movieViewData);
 
     if (loading) {
         return <div>Loading...</div>;
