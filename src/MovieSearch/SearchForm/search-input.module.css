@@ -1,18 +1,15 @@
-.form {
+.container {
     display: flex;
     gap: 10px;
     width: 400px;
     margin: 0 auto;
 }
 
-.field {
+.container input {
     flex: 1;
+    padding: 10px;
 }
 
 .container button[type="submit"] {
     min-width: 70px;
-}
-
-.clearButton {
-    font-size: 12px;
 }
