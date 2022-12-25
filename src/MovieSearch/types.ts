@@ -9,3 +9,15 @@ export type Movie = {
     readonly plot: string;
     readonly poster: string;
 };
+
+export type SearchResult<T> =
+    | {
+          readonly type: "loading";
+      }
+    | {
+          readonly type: "error";
+      }
+    | {
+          readonly type: "data";
+          readonly data: T;
+      };

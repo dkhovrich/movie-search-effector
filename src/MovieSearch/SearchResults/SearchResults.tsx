@@ -1,8 +1,9 @@
 import React from "react";
-import { useUnit } from "effector-react/effector-react.umd";
 import { Movie } from "../types";
 import classes from "./search-results.module.css";
 import { factory } from "../factory";
+import { absurd } from "../../utils/absurd";
+import { useStore } from "effector-react";
 
 type DescriptionItem = {
     readonly title: string;
@@ -20,25 +21,12 @@ const createDescriptionItems = (movie: Movie): readonly DescriptionItem[] => [
     { title: "Plot", value: movie.plot }
 ];
 
-export const SearchResults: React.FC = () => {
-    const model = factory.useModel();
-    const { loading, error, data } = useUnit(model.$movieViewData);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-    if (error) {
-        return <div>Movie not found!</div>;
-    }
-    if (data == null) {
-        return null;
-    }
-
-    const descriptionItems = createDescriptionItems(data);
+const MovieView: React.FC<Movie> = movie => {
+    const descriptionItems = createDescriptionItems(movie);
 
     return (
         <div className={classes.movie}>
-            <img src={data.poster} alt={"poster"} />
+            <img src={movie.poster} alt={"poster"} />
             <div className={classes.description}>
                 {descriptionItems.map(item => (
                     <p key={item.title} className={classes.description}>
@@ -49,4 +37,22 @@ export const SearchResults: React.FC = () => {
             </div>
         </div>
     );
+};
+
+export const SearchResults: React.FC = () => {
+    const model = factory.useModel();
+    const movie = useStore(model.$movieSearchResult);
+
+    if (movie === null) return null;
+
+    switch (movie.type) {
+        case "loading":
+            return <div>Loading...</div>;
+        case "error":
+            return <div>Movie not found!</div>;
+        case "data":
+            return <MovieView {...movie.data} />;
+        default:
+            return absurd(movie);
+    }
 };
