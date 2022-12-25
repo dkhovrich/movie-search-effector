@@ -2,7 +2,7 @@ import React from "react";
 import { useUnit } from "effector-react/effector-react.umd";
 import { Movie } from "../types";
 import classes from "./search-results.module.css";
-import { Model } from "../model";
+import { factory } from "../factory";
 
 type DescriptionItem = {
     readonly title: string;
@@ -20,12 +20,9 @@ const createDescriptionItems = (movie: Movie): readonly DescriptionItem[] => [
     { title: "Plot", value: movie.plot }
 ];
 
-export type Props = {
-    readonly $movie: Model["$movieViewData"];
-};
-
-export const SearchResults: React.FC<Props> = ({ $movie }) => {
-    const { loading, error, data } = useUnit($movie);
+export const SearchResults: React.FC = () => {
+    const model = factory.useModel();
+    const { loading, error, data } = useUnit(model.$movieViewData);
 
     if (loading) {
         return <div>Loading...</div>;

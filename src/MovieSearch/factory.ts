@@ -6,6 +6,7 @@ import {
     restore,
     sample
 } from "effector";
+import { modelFactory } from "effector-factorio";
 import { FormEvent, KeyboardEvent } from "react";
 import { Movie } from "./types";
 import { fetchMovie } from "./api";
@@ -14,7 +15,7 @@ export type FormState = {
     readonly search: string;
 };
 
-export function createModel() {
+export const factory = modelFactory(() => {
     const setField = createEvent<{
         readonly key: keyof FormState;
         readonly value: string;
@@ -75,6 +76,4 @@ export function createModel() {
         keyPressed,
         searchMovieFx
     };
-}
-
-export type Model = ReturnType<typeof createModel>;
+});

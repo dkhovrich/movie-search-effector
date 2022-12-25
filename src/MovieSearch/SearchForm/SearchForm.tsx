@@ -2,44 +2,37 @@ import React from "react";
 import classes from "./search-form.module.css";
 import { useUnit } from "effector-react";
 import { Field } from "./Field";
-import { Model } from "../model";
+import { factory } from "../factory";
 
-type ClearButtonProps = {
-    readonly onClick: () => void;
-};
+const ClearButton: React.FC = () => {
+    const model = factory.useModel();
 
-const ClearButton: React.FC<ClearButtonProps> = props => {
     return (
         <button
             type="button"
             className={classes.clearButton}
-            onClick={props.onClick}
+            onClick={() => model.clearForm()}
         >
             Clear
         </button>
     );
 };
 
-type SubmitButtonProps = {
-    readonly disabled?: boolean;
-};
+const SubmitButton: React.FC = () => {
+    const model = factory.useModel();
+    const canSubmit = useUnit(model.$canSubmit);
 
-const SubmitButton: React.FC<SubmitButtonProps> = props => {
     return (
-        <button type="submit" disabled={props.disabled}>
+        <button type="submit" disabled={!canSubmit}>
             Search
         </button>
     );
 };
 
-export type Props = {
-    readonly model: Model;
-};
-
-export const SearchForm: React.FC<Props> = ({ model }) => {
+export const SearchForm: React.FC = () => {
+    const model = factory.useModel();
     const state = useUnit(model.$form);
     const canClear = useUnit(model.$canClear);
-    const canSubmit = useUnit(model.$canSubmit);
 
     return (
         <form
@@ -57,9 +50,9 @@ export const SearchForm: React.FC<Props> = ({ model }) => {
                 focusOnMount={true}
                 focusOnEvent={model.clearForm}
             >
-                {canClear && <ClearButton onClick={() => model.clearForm()} />}
+                {canClear && <ClearButton />}
             </Field>
-            <SubmitButton disabled={!canSubmit} />
+            <SubmitButton />
         </form>
     );
 };

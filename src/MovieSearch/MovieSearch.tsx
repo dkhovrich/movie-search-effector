@@ -1,16 +1,17 @@
-import React, { useRef } from "react";
+import React from "react";
 import { SearchForm } from "./SearchForm/SearchForm";
 import { SearchResults } from "./SearchResults/SearchResults";
-import { createModel } from "./model";
+import { factory } from "./factory";
 import classes from "./movie-serach.module.css";
+import { modelView } from "effector-factorio";
 
-export const MovieSearch: React.FC = () => {
-    const model = useRef(createModel());
-
+const MovieSearchView = modelView(factory, () => {
     return (
         <div className={classes.container}>
-            <SearchForm model={model.current} />
-            <SearchResults $movie={model.current.$movieViewData} />
+            <SearchForm />
+            <SearchResults />
         </div>
     );
-};
+});
+
+export const MovieSearch = { factory, View: MovieSearchView };
