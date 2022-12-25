@@ -1,86 +1,65 @@
 import React from "react";
 import classes from "./search-form.module.css";
-import { createEffect, createEvent, createStore, sample } from "effector";
 import { useUnit } from "effector-react";
-import { Field } from "./Field/Field";
-import { fetchMovie } from "../api";
-import { Movie } from "../types";
+import { Field } from "./Field";
+import { Model } from "../model";
 
-export const searchMovieFx = createEffect<FormState, Movie, Error>(
-    ({ search }) => fetchMovie(search)
-);
-
-export type FormState = {
-    readonly search: string;
+type ClearButtonProps = {
+    readonly onClick: () => void;
 };
 
-const setField = createEvent<{
-    readonly key: keyof FormState;
-    readonly value: string;
-}>("setField");
-
-const submitted = createEvent<React.FormEvent<HTMLFormElement>>("submitted");
-
-export const clearForm = createEvent("clearForm");
-
-const $form = createStore<FormState>({ search: "" })
-    .on(setField, (state, { key, value }) => ({ ...state, [key]: value }))
-    .reset(clearForm);
-
-const $canClear = $form.map(state => state.search !== "");
-
-const $canSubmit = $form.map(state => state.search.length > 2);
-
-sample({
-    clock: submitted,
-    source: $form,
-    target: searchMovieFx
-});
-
-const ClearButton: React.FC = () => {
+const ClearButton: React.FC<ClearButtonProps> = props => {
     return (
         <button
             type="button"
             className={classes.clearButton}
-            onClick={() => clearForm()}
+            onClick={props.onClick}
         >
             Clear
         </button>
     );
 };
 
-const SubmitButton: React.FC = () => {
-    const canSubmit = useUnit($canSubmit);
+type SubmitButtonProps = {
+    readonly disabled?: boolean;
+};
 
+const SubmitButton: React.FC<SubmitButtonProps> = props => {
     return (
-        <button type="submit" disabled={!canSubmit}>
+        <button type="submit" disabled={props.disabled}>
             Search
         </button>
     );
 };
 
-export const SearchForm: React.FC = () => {
-    const state = useUnit($form);
-    const canClear = useUnit($canClear);
+export type Props = {
+    readonly model: Model;
+};
+
+export const SearchForm: React.FC<Props> = ({ model }) => {
+    const state = useUnit(model.$form);
+    const canClear = useUnit(model.$canClear);
+    const canSubmit = useUnit(model.$canSubmit);
 
     return (
-        <form className={classes.form} onSubmit={submitted}>
+        <form
+            tabIndex={-1}
+            className={classes.form}
+            onSubmit={model.submitted}
+            onKeyDown={model.keyPressed}
+        >
             <Field
                 className={classes.field}
                 name={"search"}
                 placeHolder={"Search movie..."}
                 value={state.search}
-                onChange={value => setField({ key: "search", value })}
+                onChange={value => model.setField({ key: "search", value })}
                 focusOnMount={true}
-                focusOnEvent={clearForm}
+                focusOnEvent={model.clearForm}
             >
-                {canClear && <ClearButton />}
+                {canClear && <ClearButton onClick={() => model.clearForm()} />}
             </Field>
-            <SubmitButton />
+            <SubmitButton disabled={!canSubmit} />
         </form>
     );
 };
-
-submitted.watch(event => {
-    event.preventDefault();
-});
