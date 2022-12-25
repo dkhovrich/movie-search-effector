@@ -4,11 +4,13 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:effector/react",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
-    "effector"
+    "effector",
+    "prettier"
   ]
 }
