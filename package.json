@@ -9,13 +9,6 @@
     "preview": "vite preview",
     "lint": "eslint --ext .tsx,.ts src/"
   },
-  "prettier": {
-    "tabWidth": 4,
-    "semi": true,
-    "singleQuote": false,
-    "arrowParens": "avoid",
-    "trailingComma": "none"
-  },
   "dependencies": {
     "classnames": "^2.3.2",
     "date-fns": "^2.29.3",
